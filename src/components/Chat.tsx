@@ -1,19 +1,17 @@
 "use client";
 
-import { Message, useChat } from "ai/react";
+import { useChat } from "ai/react";
 import { ChatInput } from "./ChatInput";
 import Messages from "./Messages";
 
 type ChatProps = {
   sessionId: string;
-  initialMessages: Message[];
 };
-const Chat = ({ sessionId, initialMessages }: ChatProps) => {
+const Chat = ({ sessionId }: ChatProps) => {
   const { messages, handleInputChange, handleSubmit, input, setInput } =
     useChat({
       api: "/api/chat-stream",
       body: { sessionId },
-      initialMessages,
     });
 
   return (

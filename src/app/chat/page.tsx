@@ -19,11 +19,6 @@ const ChatPage = async ({ searchParams }: ChatPageProps) => {
     "",
   );
 
-  const initialMessages = await ragChat.history.getMessages({
-    amount: 10,
-    sessionId,
-  });
-
   const isAlreadyIndexed = await redis.sismember(
     "indexed-urls",
     resconstructedUrl,
@@ -45,7 +40,7 @@ const ChatPage = async ({ searchParams }: ChatPageProps) => {
     await redis.sadd("indexed-urls", resconstructedUrl);
   }
 
-  return <Chat sessionId={sessionId} initialMessages={initialMessages} />;
+  return <Chat sessionId={sessionId} />;
 };
 
 export default ChatPage;
