@@ -4,6 +4,7 @@ import { NextRequest } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   const { messages, sessionId } = await req.json();
+  console.log("🚀 ~ POST ~ sessionId:", sessionId);
 
   const lastMessage = messages?.at(-1)?.content;
 
