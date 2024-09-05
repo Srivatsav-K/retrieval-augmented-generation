@@ -23,6 +23,8 @@ const Home = () => {
           name="url"
           autoFocus
           placeholder="Enter a URL to chat with"
+          pattern="^(https:\/\/[^\s]+)$"
+          title="Enter a valid https url"
         />
 
         <Button type="submit">Chat</Button>

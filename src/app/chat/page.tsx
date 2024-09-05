@@ -1,6 +1,7 @@
 import Chat from "@/components/Chat";
-import { ragChat } from "@/lib/ragChat";
-import { redis } from "@/lib/redis";
+import FullpageError from "@/components/FullpageError";
+import { checkAndIndexWebsite } from "@/lib/ragChat";
+import { urlSchema } from "@/validators/urlSchema";
 import { cookies } from "next/headers";
 
 type ChatPageProps = {
@@ -10,35 +11,18 @@ type ChatPageProps = {
 };
 
 const ChatPage = async ({ searchParams }: ChatPageProps) => {
-  const sessionCookie = cookies().get("sessionId")?.value;
+  const { data: urlToIndex, error } = urlSchema.safeParse(searchParams.url);
 
-  const resconstructedUrl = searchParams.url;
-
-  const sessionId = (resconstructedUrl + "--" + sessionCookie).replace(
-    /\//g,
-    "",
-  );
-
-  const isAlreadyIndexed = await redis.sismember(
-    "indexed-urls",
-    resconstructedUrl,
-  );
-
-  console.log("🚀 ~ page ~ isAlreadyIndexed:", isAlreadyIndexed);
-
-  if (!isAlreadyIndexed) {
-    console.log("⏳ indexing...");
-
-    await ragChat.context.add({
-      type: "html",
-      source: resconstructedUrl,
-      config: { chunkOverlap: 50, chunkSize: 200 },
-    });
-
-    console.log("✅ indexing done");
-
-    await redis.sadd("indexed-urls", resconstructedUrl);
+  if (error) {
+    return (
+      <FullpageError title="Error" description={error.issues[0]?.message} />
+    );
   }
+
+  const sessionCookie = cookies().get("sessionId")?.value;
+  const sessionId = (urlToIndex + "--" + sessionCookie).replace(/\//g, "");
+
+  await checkAndIndexWebsite(urlToIndex);
 
   return <Chat sessionId={sessionId} />;
 };
