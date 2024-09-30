@@ -1,14 +1,21 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { FormEvent } from "react";
 
 const Home = () => {
-  const redirectUser = async (formData: FormData) => {
-    "use server";
+  const router = useRouter();
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
 
     const url = formData.get("url");
 
-    redirect(`/chat?url=${url}`);
+    router.push(`/chat?url=${url}`);
   };
 
   return (
@@ -17,7 +24,10 @@ const Home = () => {
         WEBSITE CHAT
       </h1>
 
-      <form className="mx-auto flex w-80 flex-col gap-3" action={redirectUser}>
+      <form
+        className="mx-auto flex w-80 flex-col gap-3"
+        onSubmit={handleSubmit}
+      >
         <Input
           type="url"
           name="url"
