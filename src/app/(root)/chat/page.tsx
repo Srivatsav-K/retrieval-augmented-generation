@@ -22,7 +22,7 @@ const ChatPage = async ({ searchParams }: ChatPageProps) => {
 
   // Get the userId from auth() -- if null, the user is not signed in
   const { userId, sessionId } = await auth();
-  const userSessionId = `${userId}-${sessionId}`;
+  const userSessionId = `${userId}-${sessionId}-${encodeURIComponent(urlToIndex)}`;
 
   await checkAndIndexWebsite(removeTrailingSlash(urlToIndex));
 
