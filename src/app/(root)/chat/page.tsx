@@ -1,8 +1,9 @@
 import Chat from "@/components/Chat";
 import FullpageError from "@/components/FullpageError";
 import { checkAndIndexWebsite } from "@/lib/ragChat";
+import { removeTrailingSlash } from "@/utils";
 import { urlSchema } from "@/validators/urlSchema";
-import { cookies } from "next/headers";
+import { auth } from "@clerk/nextjs/server";
 
 type ChatPageProps = {
   searchParams: {
@@ -19,12 +20,13 @@ const ChatPage = async ({ searchParams }: ChatPageProps) => {
     );
   }
 
-  const sessionCookie = cookies().get("sessionId")?.value;
-  const sessionId = (urlToIndex + "--" + sessionCookie).replace(/\//g, "");
+  // Get the userId from auth() -- if null, the user is not signed in
+  const { userId, sessionId } = await auth();
+  const userSessionId = `${userId}-${sessionId}`;
 
-  await checkAndIndexWebsite(urlToIndex);
+  await checkAndIndexWebsite(removeTrailingSlash(urlToIndex));
 
-  return <Chat sessionId={sessionId} />;
+  return <Chat sessionId={userSessionId} />;
 };
 
 export default ChatPage;

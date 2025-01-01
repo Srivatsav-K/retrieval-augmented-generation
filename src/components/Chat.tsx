@@ -15,7 +15,7 @@ const Chat = ({ sessionId }: ChatProps) => {
     });
 
   return (
-    <div className="relative flex min-h-full flex-col justify-between gap-2 divide-y">
+    <div className="flex min-h-full flex-col justify-between gap-2 divide-y">
       <div className="flex flex-1 flex-col justify-between">
         <Messages messages={messages} />
       </div>
