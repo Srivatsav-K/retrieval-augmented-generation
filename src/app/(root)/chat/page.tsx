@@ -4,6 +4,7 @@ import { checkAndIndexWebsite } from "@/lib/ragChat";
 import { removeTrailingSlash } from "@/utils";
 import { urlSchema } from "@/validators/urlSchema";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 type ChatPageProps = {
   searchParams: {
@@ -11,12 +12,25 @@ type ChatPageProps = {
   };
 };
 
-const ChatPage = async ({ searchParams }: ChatPageProps) => {
-  const { data: urlToIndex, error } = urlSchema.safeParse(searchParams.url);
+const ChatPage = async (props: ChatPageProps) => {
+  const { data: urlToIndex, error } = urlSchema.safeParse(
+    props?.searchParams?.url,
+  );
+
+  const handleRedirectToHome = async () => {
+    "use server";
+    redirect("/");
+  };
 
   if (error) {
     return (
-      <FullpageError title="Error" description={error.issues[0]?.message} />
+      <FullpageError
+        title="Error"
+        description={error.issues[0]?.message}
+        showAction
+        actionText="Try again"
+        action={handleRedirectToHome}
+      />
     );
   }
 
